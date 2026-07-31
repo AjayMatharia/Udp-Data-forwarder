@@ -29,6 +29,8 @@ private:
     QVector<QString> *_stationName;
     QVector<QString> *_recieverIp;
     QVector<QString> *_recieverName;
+    QVector<QPushButton *> *_recieverPorts;
+
 
     QMap<QString, QString> _stationIpMap;
 

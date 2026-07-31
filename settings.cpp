@@ -11,7 +11,13 @@ Settings::Settings(QWidget *parent)
     _stationName = new QVector<QString>();
     _recieverIp = new QVector<QString>();
     _recieverName = new QVector<QString>();
+    _recieverPorts = new QVector<QPushButton *>();
 
+
+    // QList temp = {"a","b","c","d"};
+    // qDebug()<<temp;
+    // temp.removeAt(1);
+    // qDebug()<<temp;
 
     QObject :: connect(ui->_des_pushButton_station_info_addStation ,&QPushButton::clicked, this, &Settings :: addIp);
     QObject :: connect(ui->_des_pushButton_station_info_removeStation ,&QPushButton::clicked, this, &Settings :: removeIp);
@@ -65,10 +71,15 @@ void Settings::addIp(){
         // ui->_des_tableWidget_station_info->setRowCount(ui->_des_tableWidget_station_info->rowCount()+1);
         QTableWidgetItem *_tableWidgetItemrecievername = new QTableWidgetItem("Reciever Name");
         QTableWidgetItem *_tableWidgetItemrecieverip = new QTableWidgetItem("0.0.0.0");
+        QPushButton *temp = new QPushButton("Ports");
+        QObject :: connect(temp ,&QPushButton::clicked, this, &Settings :: readSettings);
+        _recieverPorts->insert(targetRow,temp);
+        qDebug()<<*_recieverPorts;
         _tableWidgetItemrecievername->setTextAlignment(Qt::AlignCenter);
         _tableWidgetItemrecieverip->setTextAlignment(Qt::AlignCenter);
         ui->_des_tableWidget_reciever_info->setItem(targetRow, 0, _tableWidgetItemrecievername);
         ui->_des_tableWidget_reciever_info->setItem(targetRow, 1, _tableWidgetItemrecieverip);
+        ui->_des_tableWidget_reciever_info->setCellWidget(targetRow, 2,temp);
     }
 
 
@@ -84,6 +95,16 @@ void Settings::removeIp(){
         int currentRow = ui->_des_tableWidget_reciever_info->currentRow();
         if (currentRow >= 0) {
             ui->_des_tableWidget_reciever_info->removeRow(currentRow);
+            qDebug()<<"deleted:"<<_recieverPorts->at(currentRow);
+            qDebug()<<"_currentRow:"<<currentRow;
+
+            // delete _recieverPorts->at(currentRow);
+            QPushButton *temp =  _recieverPorts->at(currentRow);
+            qDebug()<<temp;
+            _recieverPorts->removeAt(currentRow);
+            // qDebug()<<temp;
+            delete temp;
+            qDebug()<<*_recieverPorts;
         }
     }
 
@@ -165,7 +186,7 @@ void Settings::saveSettings(){
 }
 void Settings::readSettings(){
     qDebug()<<"Hi";
-    QSettings settings("config.ini", QSettings::IniFormat);
+    // QSettings settings("config.ini", QSettings::IniFormat);
 
 
 }
