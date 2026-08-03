@@ -22,6 +22,14 @@ class MainWindow : public QMainWindow
 private:
     QPushButton *_button;
     QTabWidget *_mainTable;
+    QString _configPath;
+    QString _configPath2;
+    QVector<QString> *_stationPort;
+    QVector<QString> *_stationName;
+    QVector<QString> *_receiverIp;
+    QVector<QString> *_receiverName;
+    QVector<QVector<QString>> *_receiverPorts;
+
 //     QMenuBar *_menuBar;
 //     QMenu *_fileMenu;
 //     QAction *_newAction ;
@@ -30,5 +38,8 @@ private:
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+public slots:
+    void readSettings();
 };
 #endif // MAINWINDOW_H

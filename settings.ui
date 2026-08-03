@@ -90,14 +90,14 @@
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="2" column="0">
-     <widget class="QPushButton" name="_des_pushButton_reciever_info_addReciever">
+     <widget class="QPushButton" name="_des_pushButton_receiver_info_addReceiver">
       <property name="text">
        <string>Add Reciever</string>
       </property>
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QPushButton" name="_des_pushButton_reciever_info_removeReciever">
+     <widget class="QPushButton" name="_des_pushButton_receiver_info_removeReceiver">
       <property name="text">
        <string>Remove Reciever</string>
       </property>
@@ -111,7 +111,7 @@
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
-     <widget class="QTableWidget" name="_des_tableWidget_reciever_info">
+     <widget class="QTableWidget" name="_des_tableWidget_receiver_info">
       <attribute name="horizontalHeaderDefaultSectionSize">
        <number>133</number>
       </attribute>
