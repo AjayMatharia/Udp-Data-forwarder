@@ -9,6 +9,11 @@
 #include <QAction>
 #include <QMessageBox>
 #include <QApplication>
+#include<QGuiApplication>
+#include<QScrollArea>
+#include<QScreen>
+#include "clickablelabel.h"
+
 
 #include "settingsdialog.h"  // IWYU pragma: keep
 #include "settings.h"  // IWYU pragma: keep

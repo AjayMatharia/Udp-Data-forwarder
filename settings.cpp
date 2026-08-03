@@ -15,8 +15,8 @@ Settings::Settings(QWidget *parent)
     _stationName = new QVector<QString>();
     _receiverIp = new QVector<QString>();
     _receiverName = new QVector<QString>();
-    _receiverPortsbutton = new QVector<QPushButton *>();
     _receiverPorts = new QVector<QVector<QString>>();
+    _receiverPortsbutton = new QVector<QPushButton *>();
 
 
     readSettings();

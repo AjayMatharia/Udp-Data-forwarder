@@ -15,6 +15,7 @@ SOURCES += \
     settingsdialog.cpp
 
 HEADERS += \
+    clickablelabel.h \
     mainwindow.h \
     settings.h \
     settingsdialog.h
