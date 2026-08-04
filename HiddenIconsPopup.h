@@ -1,58 +1,77 @@
 #ifndef HIDDENICONSPOPUP_H
 #define HIDDENICONSPOPUP_H
 #pragma once
+
 #include <QDialog>
 #include <QGridLayout>
 #include <QCheckBox>
 #include <QPainter>
 #include <QPainterPath>
 #include <QEvent>
-#include <QPropertyAnimation> // CRITICAL NEW INCLUDE
+#include <QPropertyAnimation>
+#include <QStringList> // Better suited for lists of strings in Qt
 
 class HiddenIconsPopup : public QDialog {
     Q_OBJECT
+private:
+    QGridLayout *gridLayout; // Move layout to private member
+
 public:
     explicit HiddenIconsPopup(QWidget *parent = nullptr) : QDialog(parent) {
         setWindowFlags(Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
         setAttribute(Qt::WA_TranslucentBackground);
         setAttribute(Qt::WA_DeleteOnClose);
-
-        // Start completely transparent for the fade animation
         setWindowOpacity(0.0);
-
-        QGridLayout *gridLayout = new QGridLayout(this);
-        gridLayout->setContentsMargins(12, 12, 22, 12);
-        gridLayout->setSpacing(8);
 
         setStyleSheet(
             "QCheckBox { color: white; padding: 5px; }"
             "QCheckBox::hover { background-color: #333333; border-radius: 4px; }"
             );
 
-        QCheckBox *cb1 = new QCheckBox("Item 1", this);
-        QCheckBox *cb2 = new QCheckBox("Item 2", this);
-        QCheckBox *cb3 = new QCheckBox("Item 3", this);
-
-        gridLayout->addWidget(cb1, 0, 0);
-        gridLayout->addWidget(cb2, 0, 1);
-        gridLayout->addWidget(cb3, 1, 0);
-
-        resize(220, 120);
+        // Initialize the central layout exactly once
+        gridLayout = new QGridLayout(this);
+        gridLayout->setContentsMargins(12, 12, 22, 12); // Extra 22px margin on right for the arrow
+        gridLayout->setSpacing(8);
     }
 
-    // THE ANIMATION TRIGGER FUNCTION
+    // Changed to QStringList (safer and cleaner for Qt APIs)
+    void addPorts(const QStringList &ports) {
+        // Clear previous widgets if this function is called multiple times
+        QLayoutItem *child;
+        while ((child = gridLayout->takeAt(0)) != nullptr) {
+            if (child->widget()) {
+                child->widget()->deleteLater();
+            }
+            delete child;
+        }
+
+        const int maxColumns = 2; // Change this to 3 or 4 if you want wider grids
+
+        for (int i = 0; i < ports.size(); ++i) {
+            QCheckBox *cb = new QCheckBox(ports.at(i), this);
+
+            // Math trick to wrap layout into structured columns
+            int row = i / maxColumns;
+            int col = i % maxColumns;
+
+            gridLayout->addWidget(cb, row, col);
+        }
+
+        // Force layout calculations and resize window automatically to fit items
+        gridLayout->activate();
+        adjustSize();
+
+        // Add padding to height/width for custom drawn borders & side arrow
+        resize(width() + 15, height());
+    }
+
     void startFadeIn(int durationMs = 300) {
-        // Show the window framework on screen first
         this->show();
-
-        // Create animation target mapping the window's opacity property
         QPropertyAnimation *animation = new QPropertyAnimation(this, "windowOpacity");
-        animation->setDuration(durationMs);      // Set speed (e.g., 300ms)
-        animation->setStartValue(0.0);           // Invisible
-        animation->setEndValue(1.0);             // Fully visible
-        animation->setEasingCurve(QEasingCurve::OutCubic); // Smooth slowing effect near the end
-
-        // Start animation and automatically clean up its memory when finished
+        animation->setDuration(durationMs);
+        animation->setStartValue(0.0);
+        animation->setEndValue(1.0);
+        animation->setEasingCurve(QEasingCurve::OutCubic);
         animation->start(QAbstractAnimation::DeleteWhenStopped);
     }
 
@@ -69,6 +88,7 @@ protected:
         int arrowHeight = 16;
         int cornerRadius = 6;
 
+        // Ensure painting matches the dynamic window size
         QRect bodyRect(0, 0, width() - arrowWidth, height());
         QPainterPath path;
 
@@ -94,8 +114,5 @@ protected:
         QDialog::changeEvent(event);
     }
 };
-
-
-
 
 #endif // HIDDENICONSPOPUP_H

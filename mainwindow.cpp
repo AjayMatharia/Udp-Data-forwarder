@@ -20,7 +20,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     readSettings();
 
+
+
+
     QList<QLabel*> _stationLabels;
+    QList<ClickableLabel*> _receiverPortsLabelobj;
 
     QScreen *screen = QGuiApplication::primaryScreen();
     int physicalWidth = 800;  // Safe fallback defaults
@@ -73,11 +77,13 @@ MainWindow::MainWindow(QWidget *parent)
             QString itemText = QString(_stationName->at(row));
 
             QLabel *label1 = new QLabel(_stationName->at(row));
-            QLabel *label2 = new QLabel(_receiverName->at(row));
+            QLabel *label2 = new QLabel("speed");
 
             ClickableLabel* label3 = new ClickableLabel("Click_to_enable_Receiver_Port");
             label3->setMouseTracking(true);
             label3->setCursor(Qt::PointingHandCursor);
+
+            _receiverPortsLabelobj.append(label3);
 
             // Set layout stylesheet details cleanly avoiding duplicate overrides
             label1->setStyleSheet(
@@ -121,17 +127,22 @@ MainWindow::MainWindow(QWidget *parent)
                 );
 
             // CONNECT THE CLICK SIGNAL TO OPEN THE CHECKBOX POP-UP WINDOW
-            QObject::connect(label3, &ClickableLabel::clicked, [label3, this]() {
+            QObject::connect(label3, &ClickableLabel::clicked, [this, label3, row]() {
                 HiddenIconsPopup* popup = new HiddenIconsPopup(this);
 
+                // Safe bounds-check before accessing vector items
+                if (row < _receiverPorts->size()) {
+                    popup->addPorts(_receiverPorts->at(row));
+                }
+
                 QPoint globalPos = label3->mapToGlobal(QPoint(0, 0));
+
+                // Math alignment logic: Pushes popup to the LEFT side of label3, centered vertically
                 int targetX = globalPos.x() - popup->width() - 4;
                 int targetY = globalPos.y() + (label3->height() / 2) - (popup->height() / 2);
 
                 popup->move(targetX, targetY);
-
-                // REPLACED popup->show() WITH THE SMOOTH FADE ANIMATION
-                popup->startFadeIn(350); // 350 milliseconds makes for an elegant pop-open look
+                popup->startFadeIn(350);
             });
 
 
