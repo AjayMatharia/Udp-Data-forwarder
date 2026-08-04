@@ -8,67 +8,25 @@ MainWindow::MainWindow(QWidget *parent)
 {
 
     QScreen *screen = QGuiApplication::primaryScreen();
-    int physicalWidth=0,physicalHeight=0;
-
+    int physicalWidth = 800;  // Safe fallback defaults
+    int physicalHeight = 600;
     if (screen) {
-        // qreal dpr = screen->devicePixelRatio(); // e.g., 1.5 or 2.0
-
-        // Multiply logical size by the device pixel ratio
-        // physicalWidth = screen->size().width() * dpr;
-        // physicalHeight = screen->size().height() * dpr;
-        physicalWidth = screen->size().width() ;
-        physicalHeight = screen->size().height() ;
-        // qDebug() << "True Hardware Resolution:" << physicalWidth << dpr << physicalHeight;
+        physicalWidth = screen->size().width();
+        physicalHeight = screen->size().height();
     }
-    // 1. Create the main wrapper widget (Set this as your Central Widget if using QMainWindow)
-    // auto _mainWidget = new QWidget(this);
-    // QHBoxLayout* mainLayout = new QHBoxLayout(_mainWidget);
-    // mainLayout->setContentsMargins(10, 10, 10, 10);
-    // mainLayout->setSpacing(15);
 
-    // Create the 3 main columns using an array/loop
-    // for (int i = 0; i < 3; ++i) {
-    //     // A. Create the Scroll Area container for the column
-    //     QScrollArea* scrollArea = new QScrollArea(_mainWidget);
-    //     scrollArea->setWidgetResizable(true); // Allows internal labels to resize smoothly
-    //     scrollArea->setStyleSheet("QScrollArea { border: 1px solid #dcdcdc; background-color: #f9f9f9; }");
-
-    //     // B. Create the inner widget that holds the actual labels
-    //     QWidget* containerWidget = new QWidget();
-    //     QVBoxLayout* columnLayout = new QVBoxLayout(containerWidget);
-    //     columnLayout->setAlignment(Qt::AlignTop); // Forces labels to stack tightly at the top
-    //     columnLayout->setSpacing(1);
-
-    //     // C. Fill the column with a collection of QLabels (e.g., 20 labels per column)
-    //     for (int j = 1; j <= 20; ++j) {
-    //         QLabel* label = new QLabel(QString("Column %1 - Label %2").arg(i + 1).arg(j));
-    //         label->setStyleSheet("background-color: black; border: 1px solid #e0e0e0; padding: 6px;");
-    //         columnLayout->addWidget(label);
-    //     }
-
-    //     // D. Connect the inner widget to the scroll window frame
-    //     scrollArea->setWidget(containerWidget);
-
-    //     // E. Add the scrollable column to your primary horizontal screen layout
-    //     // Gives equal widths to all three columns (stretch factor = 1)
-    //     mainLayout->addWidget(scrollArea, 1);
-    // }
-
-    // // If your class inherits from QMainWindow, set it here to respect the menu bar:
-    // this->setCentralWidget(_mainWidget);
-
-    // 1. Create the Scroll Area container
+    // 2. Create the primary Viewport Scroll Area container
     QScrollArea* scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    // Style the scroll area and its scrollbar components
+    // Style the scroll area window viewport track and vertical bar lines
     scrollArea->setStyleSheet(
         "QScrollArea { border: 1px solid #dcdcdc; background-color: #f9f9f9; }"
         "QScrollBar:vertical {"
         "    border: none;"
-        "    background: #008080;"
+        "    background: #008080;" /* Your custom teal track color */
         "    width: 10px;"
         "    margin: 0px 0px 0px 0px;"
         "}"
@@ -85,26 +43,25 @@ MainWindow::MainWindow(QWidget *parent)
         "}"
         );
 
-    // 2. Create the inner main content widget
+    // 3. Create the inner main content canvas widget
     auto _mainWidget = new QWidget();
     _mainWidget->setStyleSheet("background-color: green;");
 
-    // 3. Create and configure the grid layout
+    // 4. Create and configure the grid layout mapping system
     QGridLayout* mainLayout = new QGridLayout(_mainWidget);
     mainLayout->setAlignment(Qt::AlignTop);
     mainLayout->setSpacing(5);
 
-    // 4. Fill the layout with labels
-    // 4. Fill the layout with custom clickable labels
+    // 5. Fill the Grid system with interactive custom clickable labels
     for (int col = 0; col < 3; ++col) {
         for (int row = 0; row < 300; ++row) {
             QString itemText = QString("Column %1 - Label %2").arg(col + 1).arg(row + 1);
 
-            // Use our new class instead of standard QLabel
             ClickableLabel* label = new ClickableLabel(itemText);
             label->setMouseTracking(true);
+            label->setCursor(Qt::PointingHandCursor);
 
-            // 1. Set the stylesheet without the invalid cursor property
+            // Set layout stylesheet details cleanly avoiding duplicate overrides
             label->setStyleSheet(
                 "QLabel {"
                 "    background-color: black; "
@@ -114,73 +71,59 @@ MainWindow::MainWindow(QWidget *parent)
                 "    padding: 6px;"
                 "}"
                 "QLabel:hover {"
-                "    border: 1px solid #00adb5; "
+                "    border: 1px solid #00adb5; " /* Beautiful glowing cyan hover highlight */
                 "    background-color: #1a1a1a; "
-                "}" // Removed "cursor: pointer;" from here
+                "}"
                 );
 
-            // 2. The Native Qt Way: This automatically changes the cursor to a pointing hand on hover
-            label->setCursor(Qt::PointingHandCursor);
-
-
-            // CONNECT THE CLICK SIGNAL TO A LAMBDA TO OPEN THE POP-UP
+            // CONNECT THE CLICK SIGNAL TO OPEN THE CHECKBOX POP-UP WINDOW
             QObject::connect(label, &ClickableLabel::clicked, [this, itemText]() {
-                // Create a clean modal pop-up dialog window
+
+                // Create a clean modal popup layout frame
                 QDialog* popup = new QDialog(this);
-                popup->setWindowTitle("Label Details");
-                popup->setAttribute(Qt::WA_DeleteOnClose); // Automatically frees memory when closed
+                popup->setWindowTitle("Item Selections");
+                popup->setAttribute(Qt::WA_DeleteOnClose); // Automatic heap memory cleanup on close
 
+                // Arrange layout vertically inside the popup
                 QVBoxLayout* popupLayout = new QVBoxLayout(popup);
+                popupLayout->setSpacing(10);
+                popupLayout->setContentsMargins(15, 15, 15, 15);
 
-                // Add custom info text inside the pop-up
-                QLabel* infoText = new QLabel(QString("You clicked on:\n%1").arg(itemText), popup);
-                infoText->setAlignment(Qt::AlignCenter);
-                popupLayout->addWidget(infoText);
+                // Add Title Context Header
+                QLabel* titleLabel = new QLabel(QString("Options for: %1").arg(itemText), popup);
+                titleLabel->setStyleSheet("font-weight: bold; font-size: 12px;");
+                popupLayout->addWidget(titleLabel);
 
-                // Show the pop-up window
-                popup->resize(250, 150);
-                popup->exec(); // .exec() opens it as a modal (blocks the main window until closed)
+                // Add Checkbox 1
+                QCheckBox* checkBox1 = new QCheckBox("Option Alpha", popup);
+                popupLayout->addWidget(checkBox1);
+
+                // Add Checkbox 2
+                QCheckBox* checkBox2 = new QCheckBox("Option Beta", popup);
+                popupLayout->addWidget(checkBox2);
+
+                // Add Checkbox 3
+                QCheckBox* checkBox3 = new QCheckBox("Option Gamma", popup);
+                popupLayout->addWidget(checkBox3);
+
+                // Optional: Add a close confirmation button at bottom
+                QPushButton* closeBtn = new QPushButton("Apply", popup);
+                popupLayout->addWidget(closeBtn);
+                QObject::connect(closeBtn, &QPushButton::clicked, popup, &QDialog::accept);
+
+                // Sizing boundaries calculation execution
+                popup->resize(280, 180);
+                popup->exec(); // Blocks background execution interaction seamlessly
             });
 
             mainLayout->addWidget(label, row, col);
         }
     }
 
-    // for (int col = 0; col < 3; ++col) {
-    //     for (int row = 0; row < 300; ++row) { // Changed row index to start from 0
-    //         QLabel* label = new QLabel(QString("Column %1 - Label %2").arg(col + 1).arg(row + 1));
-    //         // label->setStyleSheet(
-    //         //     "background-color: black; "
-    //         //     "color: white; "
-    //         //     "border: 2px solid red; "  /* Format: width style color */
-    //         //     "border-radius: 4px; "    /* Optional: Rounds the sharp corners */
-    //         //     "padding: 6px;"
-    //         //     );
-    //         label->setStyleSheet(
-    //             "QLabel {"
-    //             "    background-color: black; "
-    //             "    color: white; "
-    //             "    border: 1px solid #444444; "
-    //             "    padding: 6px;"
-    //             "}"
-    //             "QLabel:hover {"  /* FIXED: Changed '::hover' to ':hover' */
-    //             "    border: 1px solid #00adb5; "
-    //             "    background-color: #1a1a1a; "
-    //             "}"
-    //             );
+    // 6. Connect your fully built content canvas container to the parent scroll framing area
+    scrollArea->setWidget(_mainWidget);
 
-
-    //         // CRITICAL FIX: Changed text color to white so it's readable on black background
-    //         // label->setStyleSheet("background-color: black; color: white; border: 1px solid #e0e0e0; padding: 6px;");
-
-    //         mainLayout->addWidget(label, row, col);
-    //     }
-    // }
-
-    // // 5. Connect the populated inner widget to the scroll area
-    // scrollArea->setWidget(_mainWidget);
-
-    // // 6. Set the scroll area as the central widget of your QMainWindow
+    // 7. Force window layout layer viewport display below standard menu systems
     this->setCentralWidget(scrollArea);
 
 
