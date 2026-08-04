@@ -13,6 +13,9 @@
 #include<QScrollArea>
 #include<QScreen>
 #include "clickablelabel.h"
+#include "HiddenIconsPopup.h"
+
+
 
 
 #include "settingsdialog.h"  // IWYU pragma: keep

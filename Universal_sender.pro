@@ -15,6 +15,7 @@ SOURCES += \
     settingsdialog.cpp
 
 HEADERS += \
+    HiddenIconsPopup.h \
     clickablelabel.h \
     mainwindow.h \
     settings.h \

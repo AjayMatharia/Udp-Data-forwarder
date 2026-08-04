@@ -6,6 +6,21 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    _stationPort = new QVector<QString>();
+    _stationName = new QVector<QString>();
+    _receiverIp = new QVector<QString>();
+    _receiverName = new QVector<QString>();
+    _receiverPorts = new QVector<QVector<QString>>();
+
+
+
+    _configPath = QCoreApplication::applicationDirPath() + "/Settings/config.ini";
+    _configPath2 = QCoreApplication::applicationDirPath() + "/Settings/configPort.ini";
+
+
+    readSettings();
+
+    QList<QLabel*> _stationLabels;
 
     QScreen *screen = QGuiApplication::primaryScreen();
     int physicalWidth = 800;  // Safe fallback defaults
@@ -53,16 +68,45 @@ MainWindow::MainWindow(QWidget *parent)
     mainLayout->setSpacing(5);
 
     // 5. Fill the Grid system with interactive custom clickable labels
-    for (int col = 0; col < 3; ++col) {
-        for (int row = 0; row < 300; ++row) {
-            QString itemText = QString("Column %1 - Label %2").arg(col + 1).arg(row + 1);
+        for (int row = 0; row < _stationName->size(); ++row) {
+            // QString itemText = QString("Column %1 - Label %2").arg(col + 1).arg(row + 1);
+            QString itemText = QString(_stationName->at(row));
 
-            ClickableLabel* label = new ClickableLabel(itemText);
-            label->setMouseTracking(true);
-            label->setCursor(Qt::PointingHandCursor);
+            QLabel *label1 = new QLabel(_stationName->at(row));
+            QLabel *label2 = new QLabel(_receiverName->at(row));
+
+            ClickableLabel* label3 = new ClickableLabel("Click_to_enable_Receiver_Port");
+            label3->setMouseTracking(true);
+            label3->setCursor(Qt::PointingHandCursor);
 
             // Set layout stylesheet details cleanly avoiding duplicate overrides
-            label->setStyleSheet(
+            label1->setStyleSheet(
+                "QLabel {"
+                "    background-color: blue; "
+                "    color: white; "
+                "    border: 1px solid #e0e0e0; "
+                "    border-radius: 4px; "
+                "    padding: 6px;"
+                "}"
+                "QLabel:hover {"
+                "    border: 1px solid #00adb5; " /* Beautiful glowing cyan hover highlight */
+                "    background-color: #1a1a1a; "
+                "}"
+                );
+            label2->setStyleSheet(
+                "QLabel {"
+                "    background-color: lightgreen; "
+                "    color: white; "
+                "    border: 1px solid #e0e0e0; "
+                "    border-radius: 4px; "
+                "    padding: 6px;"
+                "}"
+                "QLabel:hover {"
+                "    border: 1px solid #00adb5; " /* Beautiful glowing cyan hover highlight */
+                "    background-color: #1a1a1a; "
+                "}"
+                );
+            label3->setStyleSheet(
                 "QLabel {"
                 "    background-color: black; "
                 "    color: white; "
@@ -77,48 +121,28 @@ MainWindow::MainWindow(QWidget *parent)
                 );
 
             // CONNECT THE CLICK SIGNAL TO OPEN THE CHECKBOX POP-UP WINDOW
-            QObject::connect(label, &ClickableLabel::clicked, [this, itemText]() {
+            QObject::connect(label3, &ClickableLabel::clicked, [label3, this]() {
+                HiddenIconsPopup* popup = new HiddenIconsPopup(this);
 
-                // Create a clean modal popup layout frame
-                QDialog* popup = new QDialog(this);
-                popup->setWindowTitle("Item Selections");
-                popup->setAttribute(Qt::WA_DeleteOnClose); // Automatic heap memory cleanup on close
+                QPoint globalPos = label3->mapToGlobal(QPoint(0, 0));
+                int targetX = globalPos.x() - popup->width() - 4;
+                int targetY = globalPos.y() + (label3->height() / 2) - (popup->height() / 2);
 
-                // Arrange layout vertically inside the popup
-                QVBoxLayout* popupLayout = new QVBoxLayout(popup);
-                popupLayout->setSpacing(10);
-                popupLayout->setContentsMargins(15, 15, 15, 15);
+                popup->move(targetX, targetY);
 
-                // Add Title Context Header
-                QLabel* titleLabel = new QLabel(QString("Options for: %1").arg(itemText), popup);
-                titleLabel->setStyleSheet("font-weight: bold; font-size: 12px;");
-                popupLayout->addWidget(titleLabel);
-
-                // Add Checkbox 1
-                QCheckBox* checkBox1 = new QCheckBox("Option Alpha", popup);
-                popupLayout->addWidget(checkBox1);
-
-                // Add Checkbox 2
-                QCheckBox* checkBox2 = new QCheckBox("Option Beta", popup);
-                popupLayout->addWidget(checkBox2);
-
-                // Add Checkbox 3
-                QCheckBox* checkBox3 = new QCheckBox("Option Gamma", popup);
-                popupLayout->addWidget(checkBox3);
-
-                // Optional: Add a close confirmation button at bottom
-                QPushButton* closeBtn = new QPushButton("Apply", popup);
-                popupLayout->addWidget(closeBtn);
-                QObject::connect(closeBtn, &QPushButton::clicked, popup, &QDialog::accept);
-
-                // Sizing boundaries calculation execution
-                popup->resize(280, 180);
-                popup->exec(); // Blocks background execution interaction seamlessly
+                // REPLACED popup->show() WITH THE SMOOTH FADE ANIMATION
+                popup->startFadeIn(350); // 350 milliseconds makes for an elegant pop-open look
             });
 
-            mainLayout->addWidget(label, row, col);
+
+
+
+
+            mainLayout->addWidget(label1, row, 0);
+            mainLayout->addWidget(label2, row, 1);
+            mainLayout->addWidget(label3, row, 3);
         }
-    }
+
 
     // 6. Connect your fully built content canvas container to the parent scroll framing area
     scrollArea->setWidget(_mainWidget);
@@ -156,21 +180,6 @@ MainWindow::MainWindow(QWidget *parent)
     //     "    background-color: lightgreen;"  // Color when hovered
     //     "}"
     //     );
-    _stationPort = new QVector<QString>();
-    _stationName = new QVector<QString>();
-    _receiverIp = new QVector<QString>();
-    _receiverName = new QVector<QString>();
-    _receiverPorts = new QVector<QVector<QString>>();
-
-
-
-    _configPath = QCoreApplication::applicationDirPath() + "/Settings/config.ini";
-    _configPath2 = QCoreApplication::applicationDirPath() + "/Settings/configPort.ini";
-
-
-    readSettings();
-
-    QList<QLabel*> _stationLabels;
 
     // for (int i = 0; i <_stationName->size(); ++i) {
     //     _stationLabels.append(new QLabel);
