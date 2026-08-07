@@ -6,7 +6,7 @@
 #include <QVector>
 #include <QMap>
 #include <QSettings>
-#include "settingsdialog.h"  // IWYU pragma: keep
+#include <QLineEdit>
 
 
 
@@ -25,13 +25,12 @@ public:
 private:
     Ui::Settings *ui;
     //2D vector
-    QVector2D *_ports;
-    QVector<QString> *_stationPort;
-    QVector<QString> *_stationName;
-    QVector<QString> *_receiverIp;
-    QVector<QString> *_receiverName;
-    QVector<QPushButton *> *_receiverPortsbutton;
-    QVector<QVector<QString>> *_receiverPorts;
+    QVector<QString> _stationPort;
+    QVector<QString> _stationName;
+    QVector<QString> _receiverIp;
+    QVector<QString> _receiverName;
+    QVector<QPushButton *> _receiverPortsbutton;
+    QVector<QVector<QString>> _receiverPorts;
 
     QString _configPath;
     QString _configPath2;
@@ -43,10 +42,9 @@ private:
 public slots:
     void readSettings();
     void portSettings();
-    void receiveData(QVector<QString> temp);
     void saveSettings();
-    void addIp();
-    void removeIp();
+    void addInfo();
+    void removeInfo();
 
 
 };

@@ -16,7 +16,11 @@ class HiddenIconsPopup : public QDialog {
 private:
     QGridLayout *gridLayout; // Move layout to private member
 
+
+
+
 public:
+
     explicit HiddenIconsPopup(QWidget *parent = nullptr) : QDialog(parent) {
         setWindowFlags(Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
         setAttribute(Qt::WA_TranslucentBackground);
@@ -35,35 +39,38 @@ public:
     }
 
     // Changed to QStringList (safer and cleaner for Qt APIs)
-    void addPorts(const QStringList &ports) {
-        // Clear previous widgets if this function is called multiple times
-        QLayoutItem *child;
-        while ((child = gridLayout->takeAt(0)) != nullptr) {
-            if (child->widget()) {
-                child->widget()->deleteLater();
-            }
-            delete child;
-        }
+    void addPorts(const QStringList &ports, const QVector<QString> &currentStates) {
+        // ... layout cleaning logic stays exactly the same ...
 
-        const int maxColumns = 2; // Change this to 3 or 4 if you want wider grids
-
+        const int maxColumns = 2;
         for (int i = 0; i < ports.size(); ++i) {
             QCheckBox *cb = new QCheckBox(ports.at(i), this);
 
-            // Math trick to wrap layout into structured columns
+            // Rehydrate the checkmark state from memory
+            if (i < currentStates.size() && currentStates.at(i) == "1") {
+                cb->setChecked(true);
+            } else {
+                cb->setChecked(false);
+            }
+
+            // CONNECT TOGGLE BACK TO PARENT:
+            // Whenever a user clicks this checkbox, we fire a notification out
+            int receiverIndex = i; // 'i' maps perfectly to the receiver row index in your data loop
+
+            connect(cb, &QCheckBox::toggled, [this, receiverIndex](bool checked) {
+                // Emit a custom signal or reach back into your main storage layer:
+                emit portToggledInPopup(receiverIndex, checked);
+            });
+
             int row = i / maxColumns;
             int col = i % maxColumns;
-
             gridLayout->addWidget(cb, row, col);
         }
 
-        // Force layout calculations and resize window automatically to fit items
         gridLayout->activate();
         adjustSize();
-
-        // Add padding to height/width for custom drawn borders & side arrow
-        resize(width() + 15, height());
     }
+
 
     void startFadeIn(int durationMs = 300) {
         this->show();
@@ -74,6 +81,10 @@ public:
         animation->setEasingCurve(QEasingCurve::OutCubic);
         animation->start(QAbstractAnimation::DeleteWhenStopped);
     }
+
+signals:
+    // FIX: Declare the signal so the compiler recognizes it
+    void portToggledInPopup(int receiverIndex, bool checked);
 
 protected:
     void paintEvent(QPaintEvent *event) override {

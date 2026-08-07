@@ -12,13 +12,16 @@
 #include<QGuiApplication>
 #include<QScrollArea>
 #include<QScreen>
+#include<QThread>
+#include <utility>  // Required for std::as_const
+
 #include "clickablelabel.h"
 #include "HiddenIconsPopup.h"
+#include "UdpStationWorker.h"
 
 
 
 
-#include "settingsdialog.h"  // IWYU pragma: keep
 #include "settings.h"  // IWYU pragma: keep
 
 
@@ -37,6 +40,10 @@ private:
     QVector<QString> *_receiverIp;
     QVector<QString> *_receiverName;
     QVector<QVector<QString>> *_receiverPorts;
+    QVector<QVector<QString>> *_receiverPorts2;
+    QList<QThread*> m_udpThreads;
+    QList<UdpStationWorker*> m_udpWorkers;
+
 
 //     QMenuBar *_menuBar;
 //     QMenu *_fileMenu;
@@ -46,6 +53,10 @@ private:
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void startAllUdpThreads();
+    void onUdpDataReceived(const QString &stationName, const QString &textData, const QString &senderIp);
+    void stopAllUdpThreads();
+    // void startAllUdpThreads();
 
 public slots:
     void readSettings();

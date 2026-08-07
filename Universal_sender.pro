@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,14 +12,14 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     settings.cpp \
-    settingsdialog.cpp
+    udpstationworker.cpp
 
 HEADERS += \
     HiddenIconsPopup.h \
     clickablelabel.h \
     mainwindow.h \
     settings.h \
-    settingsdialog.h
+    udpstationworker.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
