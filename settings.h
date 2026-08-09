@@ -33,7 +33,7 @@ private:
     QVector<QVector<QString>> _receiverPorts;
 
     QString _configPath;
-    QString _configPath2;
+    // QString _configPath2;
     unsigned int indexvalue;
 
 

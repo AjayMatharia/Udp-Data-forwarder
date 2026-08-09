@@ -36,7 +36,7 @@ private slots:
 
 signals:
     // Pushes extracted string back across threads to the UI layer
-    void datagramReceived(const QString &stationName, const QString &textData, const QString &senderIp);
+    void datagramReceived(const QString &stationName, const QString &textData, const QString &senderIp,int packetSize );
     void finished();
 };
 

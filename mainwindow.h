@@ -13,6 +13,7 @@
 #include<QScrollArea>
 #include<QScreen>
 #include<QThread>
+#include <QDateTime>
 #include <utility>  // Required for std::as_const
 
 #include "clickablelabel.h"
@@ -34,15 +35,22 @@ private:
     QPushButton *_button;
     QTabWidget *_mainTable;
     QString _configPath;
-    QString _configPath2;
     QVector<QString> *_stationPort;
     QVector<QString> *_stationName;
     QVector<QString> *_receiverIp;
     QVector<QString> *_receiverName;
+    QVector<QString> *_receiverPort ;
     QVector<QVector<QString>> *_receiverPorts;
     QVector<QVector<QString>> *_receiverPorts2;
     QList<QThread*> m_udpThreads;
     QList<UdpStationWorker*> m_udpWorkers;
+    QWidget* _mainWidget;
+    QList<QLabel*> _stationLabels;
+    QList<ClickableLabel*> _receiverPortsLabelobj;
+    QGridLayout* mainLayout;
+     QList<QLabel*> _speedLabelsObj;
+     QMap<QString, QList<qint64>> m_stationPacketTimes;
+
 
 
 //     QMenuBar *_menuBar;
@@ -50,15 +58,18 @@ private:
 //     QAction *_newAction ;
 //     QAction *_openAction;
 //     QAction *_exitAction;
+    void clearMainWidget();
+    void buildMainGrid();
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void startAllUdpThreads();
-    void onUdpDataReceived(const QString &stationName, const QString &textData, const QString &senderIp);
+    void onUdpDataReceived(const QString &stationName, const QString &textData, const QString &senderIp,int packetSize);
     void stopAllUdpThreads();
     // void startAllUdpThreads();
 
 public slots:
     void readSettings();
+    // void MainWindow::onUdpDataReceived(const QString &stationName, const QString &textData, const QString &senderIp, int packetSize);
 };
 #endif // MAINWINDOW_H

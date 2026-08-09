@@ -63,7 +63,7 @@ void UdpStationWorker::handleReadyRead() {
 
         QString receivedText = QString::fromUtf8(buffer).trimmed();
         QString cleanIp = senderIp.toString().remove("::ffff:");
-        emit datagramReceived(m_stationName, receivedText, cleanIp);
+        emit datagramReceived(m_stationName, receivedText, cleanIp, buffer.size());
     }
 }
 
