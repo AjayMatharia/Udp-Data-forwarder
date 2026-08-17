@@ -30,7 +30,7 @@ RESOURCES += resources.qrc
 
 1. Clone this repository locally:
    ```bash
-   git clone https://github.com
+   gh repo clone AjayMatharia/Udp-Data-forwarder
    ```
 2. Open the project profile configuration `udp-data-forwarder.pro` inside your local **Qt Creator IDE**.
 3. Hit **Build and Run** (`Ctrl + R`) to compile the optimized binary.
