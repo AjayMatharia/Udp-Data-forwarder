@@ -1,0 +1,17 @@
+<svg xmlns="http://w3.org" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background Rounded Box -->
+  <rect x="4" y="4" width="56" height="56" rx="12" fill="#005252" stroke="#00adb5" stroke-width="2"/>
+  
+  <!-- Left/Input Packet Node -->
+  <rect x="10" y="26" width="8" height="12" rx="2" fill="#ffcc00"/>
+  
+  <!-- Center Forwarding Arrow / Path -->
+  <path d="M21 32 H43" stroke="#00adb5" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 4"/>
+  <polygon points="41,27 49,32 41,37" fill="#00adb5"/>
+  
+  <!-- Right/Output Packet Node -->
+  <rect x="46" y="26" width="8" height="12" rx="2" fill="#ffcc00"/>
+  
+  <!-- Sub-tle status indicator light -->
+  <circle cx="32" cy="16" r="3" fill="#2CDE85"/>
+</svg>

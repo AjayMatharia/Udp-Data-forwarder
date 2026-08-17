@@ -1,11 +1,10 @@
     #include "mainwindow.h"
 
-
-
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+
+    //QVector to StoreData
     _stationPort = new QVector<QString>();
     _stationName = new QVector<QString>();
     _receiverIp = new QVector<QString>();
@@ -13,9 +12,12 @@ MainWindow::MainWindow(QWidget *parent)
     _receiverPorts = new QVector<QVector<QString>>();
     _receiverPorts2 = new QVector<QVector<QString>>();
 
+    //Setting path
     _configPath = QCoreApplication::applicationDirPath() + "/Settings/config.ini";
 
+    //reading settings
     readSettings();
+
     *_receiverPorts2 = *_receiverPorts;
     startAllUdpThreads(); // Fire up thread listeners
 
@@ -58,122 +60,9 @@ MainWindow::MainWindow(QWidget *parent)
     _mainWidget->setStyleSheet("background-color: dark blue;");
 
     mainLayout = nullptr;
-    // mainLayout = new QGridLayout(_mainWidget);
-    // mainLayout->setAlignment(Qt::AlignTop);
-    // mainLayout->setSpacing(5);
 
     buildMainGrid();
-    // mainLayout = new QGridLayout(_mainWidget);
-    // mainLayout->setAlignment(Qt::AlignTop);
-    // mainLayout->setSpacing(5);
 
-
-
-    // // Fill the Grid system with interactive labels
-    // for (int row = 0; row < _stationName->size(); ++row) {
-    //     QLabel *label1 = new QLabel(_stationName->at(row));
-    //     QLabel *label2 = new QLabel("speed");
-
-    //     ClickableLabel* label3 = new ClickableLabel("Click_to_enable_Receiver_Port");
-    //     label3->setMouseTracking(true);
-    //     label3->setCursor(Qt::PointingHandCursor);
-
-    //     _receiverPortsLabelobj.append(label3);
-
-    //     // Apply Stylesheets uniform parameters
-    //     QString basicStyle =
-    //         "QLabel { background-color: #005252; color: white; border: 1px solid #e0e0e0; border-radius: 4px; padding: 6px; }"
-    //         "QLabel:hover { border: 1px solid #00adb5; background-color: #1a1a1a; }";
-
-    //     label1->setStyleSheet(basicStyle);
-    //     label2->setStyleSheet(basicStyle);
-    //     label3->setStyleSheet(basicStyle);
-
-    //     // Add to layout grid rows
-    //     mainLayout->addWidget(label1, row, 0);
-    //     mainLayout->addWidget(label2, row, 1);
-    //     mainLayout->addWidget(label3, row, 2);
-
-    //     QObject::connect(label3, &ClickableLabel::clicked, [this, label3, row]() {
-    //         HiddenIconsPopup* popup = new HiddenIconsPopup(this);
-
-    //         QStringList tempStationNames;
-    //         QVector<QString> currentStates;
-
-    //         if (_receiverPorts2 && !_receiverPorts2->isEmpty() && _receiverName) {
-    //             for (int j = 0; j < _receiverPorts2->size(); ++j) {
-    //                 if (j < _receiverName->size() && row < _receiverPorts2->at(j).size()) {
-    //                     QString displayStr = QString("%1: %2")
-    //                     .arg(_receiverIp->at(j))
-    //                         .arg(_receiverPorts->at(j).at(row));
-
-    //                     tempStationNames.append(displayStr);
-    //                     currentStates.append(_receiverPorts2->at(j).at(row));
-    //                 }
-    //             }
-    //         }
-
-    //         popup->addPorts(tempStationNames, currentStates);
-    //         popup->adjustSize();
-
-    //         // 1. LISTEN TO LIVE POPUP TOGGLES INTERACTIVELY
-    //         connect(popup, &HiddenIconsPopup::portToggledInPopup, [this, row](int receiverIdx, bool isChecked) {
-    //             // Bounds guard checks
-    //             if (!_receiverPorts2 || receiverIdx >= _receiverPorts2->size() || row >= _receiverPorts2->at(receiverIdx).size()) return;
-
-    //             // Step A: Update internal memory matrix instantly
-    //             _receiverPorts2->operator[](receiverIdx)[row] = isChecked ? "1" : "0";
-
-    //             // Step B: Calculate fresh routing targets
-    //             QList<QPair<QString, quint16>> updatedTargets;
-    //             int receiverCount = _receiverName->size();
-
-    //             for (int j = 0; j < receiverCount; ++j) {
-    //                 if (j < _receiverPorts2->size() && row < _receiverPorts2->at(j).size()) {
-    //                     if (_receiverPorts2->at(j).at(row) == "1") {
-    //                         QString ip = _receiverIp->at(j);
-    //                         quint16 destPort = _receiverPorts->at(j).at(row).toUShort();
-    //                         updatedTargets.append(qMakePair(ip, destPort));
-    //                     }
-    //                 }
-    //             }
-
-    //             // Step C: Secure Thread Pointer Resolution via Object Name Mapping
-    //             UdpStationWorker* activeWorker = nullptr;
-
-    //             if (row < _stationName->size()) {
-    //                 QString targetStationName = _stationName->at(row);
-
-    //                 // FIX: Replaced deprecated qAsConst with modern std::as_const
-    //                 for (UdpStationWorker* worker : std::as_const(m_udpWorkers)) {
-    //                     if (worker && (worker->objectName() == targetStationName)) {
-    //                         activeWorker = worker;
-    //                         break;
-    //                     }
-    //                 }
-
-
-    //             }
-
-    //             // Step D: Execute Cross-Thread invocation safely
-    //             if (activeWorker) {
-    //                 using ForwardTargetsType = QList<QPair<QString, quint16>>;
-    //                 QMetaObject::invokeMethod(activeWorker, "setForwardingTargets",
-    //                                           Qt::QueuedConnection,
-    //                                           Q_ARG(ForwardTargetsType, updatedTargets));
-    //                 qDebug() << "Live network rerouted securely for station:" << _stationName->at(row);
-    //             }
-    //             qDebug()<<updatedTargets;
-    //         });
-
-    //         QPoint globalPos = label3->mapToGlobal(QPoint(0, 0));
-    //         int targetX = globalPos.x() - popup->width() - 4;
-    //         int targetY = globalPos.y() + (label3->height() / 2) - (popup->height() / 2);
-
-    //         popup->move(targetX, targetY);
-    //         popup->startFadeIn(350);
-    //     });
-    // }
     scrollArea->setWidget(_mainWidget);
     setCentralWidget(scrollArea);
     resize(physicalWidth / 2, physicalHeight / 2);
@@ -196,9 +85,9 @@ MainWindow::MainWindow(QWidget *parent)
     QAction *_settingsAction = new QAction("Preferences...", this);
 
     // Add actions to the menu
-    _fileMenu->addAction(_newAction);
-    _fileMenu->addAction(_openAction);
-    _fileMenu->addSeparator();
+    // _fileMenu->addAction(_newAction);
+    // _fileMenu->addAction(_openAction);
+    // _fileMenu->addSeparator();
     _fileMenu->addAction(_exitAction);
 
     _settingsMenu->addAction(_settingsAction);
@@ -246,7 +135,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    setWindowTitle("Data Forwarding");
+    setWindowTitle("UDP Data Forwarder");
     // resize(400, 300);
 
 
@@ -257,7 +146,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow() {
-    delete _button;
+    // delete _button;
     delete _mainTable;
     delete _stationPort;
     delete _stationName;
@@ -266,6 +155,8 @@ MainWindow::~MainWindow() {
     delete _receiverPort ;
     delete _receiverPorts;
     delete _receiverPorts2;
+    delete _mainWidget;
+    delete mainLayout;
     // delete mainLayout;
 
 }
@@ -275,15 +166,15 @@ MainWindow::~MainWindow() {
 void MainWindow::readSettings(){
 
 
-_stationPort->clear();
-_stationName->clear();
-_receiverIp->clear();
-_receiverName->clear();
-// _receiverPort->clear();
+    _stationPort->clear();
+    _stationName->clear();
+    _receiverIp->clear();
+    _receiverName->clear();
+    // _receiverPort->clear();
     _receiverPorts->clear();
     _receiverPorts2->clear();
-     // _stationLabels;
-     // _receiverPortsLabelobj;
+    // _stationLabels;
+    // _receiverPortsLabelobj;
 
 
 
@@ -361,10 +252,10 @@ void MainWindow::startAllUdpThreads() {
 
         // 2. Prepare our strict routing list FIRST
         QList<QPair<QString, quint16>> checkedTargetsOnly;
-
+        //ignore this code
         for (int j = 0; j < receiverCount; ++j) {
             if (j < _receiverPorts->size() && i < _receiverPorts->at(j).size()) {
-                if (_receiverPorts->at(j).at(i) == "1") {
+                if (_receiverPorts2->at(j).at(i) == "1") {
                     QString ip = _receiverIp->at(j);
                     quint16 destPort = port; // Match destination target port criteria
                     checkedTargetsOnly.append(qMakePair(ip, destPort));
@@ -502,110 +393,7 @@ void MainWindow::clearMainWidget() {
     mainLayout = nullptr;
 
     qDebug() << "🧹 Main widget layout cleared successfully! All elements deleted.";
-    // for (int row = 0; row < _stationName->size(); ++row) {
-    //     QLabel *label1 = new QLabel(_stationName->at(row));
-    //     QLabel *label2 = new QLabel("speed");
 
-    //     ClickableLabel* label3 = new ClickableLabel("Click_to_enable_Receiver_Port");
-    //     label3->setMouseTracking(true);
-    //     label3->setCursor(Qt::PointingHandCursor);
-
-    //     _receiverPortsLabelobj.append(label3);
-
-    //     // Apply Stylesheets uniform parameters
-    //     QString basicStyle =
-    //         "QLabel { background-color: #005252; color: white; border: 1px solid #e0e0e0; border-radius: 4px; padding: 6px; }"
-    //         "QLabel:hover { border: 1px solid #00adb5; background-color: #1a1a1a; }";
-
-    //     label1->setStyleSheet(basicStyle);
-    //     label2->setStyleSheet(basicStyle);
-    //     label3->setStyleSheet(basicStyle);
-
-    //     // Add to layout grid rows
-    //     mainLayout->addWidget(label1, row, 0);
-    //     mainLayout->addWidget(label2, row, 1);
-    //     mainLayout->addWidget(label3, row, 2);
-
-    //     QObject::connect(label3, &ClickableLabel::clicked, [this, label3, row]() {
-    //         HiddenIconsPopup* popup = new HiddenIconsPopup(this);
-
-    //         QStringList tempStationNames;
-    //         QVector<QString> currentStates;
-
-    //         if (_receiverPorts2 && !_receiverPorts2->isEmpty() && _receiverName) {
-    //             for (int j = 0; j < _receiverPorts2->size(); ++j) {
-    //                 if (j < _receiverName->size() && row < _receiverPorts2->at(j).size()) {
-    //                     QString displayStr = QString("%1: %2")
-    //                     .arg(_receiverIp->at(j))
-    //                         .arg(_receiverPorts->at(j).at(row));
-
-    //                     tempStationNames.append(displayStr);
-    //                     currentStates.append(_receiverPorts2->at(j).at(row));
-    //                 }
-    //             }
-    //         }
-
-    //         popup->addPorts(tempStationNames, currentStates);
-    //         popup->adjustSize();
-
-    //         // 1. LISTEN TO LIVE POPUP TOGGLES INTERACTIVELY
-    //         connect(popup, &HiddenIconsPopup::portToggledInPopup, [this, row](int receiverIdx, bool isChecked) {
-    //             // Bounds guard checks
-    //             if (!_receiverPorts2 || receiverIdx >= _receiverPorts2->size() || row >= _receiverPorts2->at(receiverIdx).size()) return;
-
-    //             // Step A: Update internal memory matrix instantly
-    //             _receiverPorts2->operator[](receiverIdx)[row] = isChecked ? "1" : "0";
-
-    //             // Step B: Calculate fresh routing targets
-    //             QList<QPair<QString, quint16>> updatedTargets;
-    //             int receiverCount = _receiverName->size();
-
-    //             for (int j = 0; j < receiverCount; ++j) {
-    //                 if (j < _receiverPorts2->size() && row < _receiverPorts2->at(j).size()) {
-    //                     if (_receiverPorts2->at(j).at(row) == "1") {
-    //                         QString ip = _receiverIp->at(j);
-    //                         quint16 destPort = _receiverPorts->at(j).at(row).toUShort();
-    //                         updatedTargets.append(qMakePair(ip, destPort));
-    //                     }
-    //                 }
-    //             }
-
-    //             // Step C: Secure Thread Pointer Resolution via Object Name Mapping
-    //             UdpStationWorker* activeWorker = nullptr;
-
-    //             if (row < _stationName->size()) {
-    //                 QString targetStationName = _stationName->at(row);
-
-    //                 // FIX: Replaced deprecated qAsConst with modern std::as_const
-    //                 for (UdpStationWorker* worker : std::as_const(m_udpWorkers)) {
-    //                     if (worker && (worker->objectName() == targetStationName)) {
-    //                         activeWorker = worker;
-    //                         break;
-    //                     }
-    //                 }
-
-
-    //             }
-
-    //             // Step D: Execute Cross-Thread invocation safely
-    //             if (activeWorker) {
-    //                 using ForwardTargetsType = QList<QPair<QString, quint16>>;
-    //                 QMetaObject::invokeMethod(activeWorker, "setForwardingTargets",
-    //                                           Qt::QueuedConnection,
-    //                                           Q_ARG(ForwardTargetsType, updatedTargets));
-    //                 qDebug() << "Live network rerouted securely for station:" << _stationName->at(row);
-    //             }
-    //             qDebug()<<updatedTargets;
-    //         });
-
-    //         QPoint globalPos = label3->mapToGlobal(QPoint(0, 0));
-    //         int targetX = globalPos.x() - popup->width() - 4;
-    //         int targetY = globalPos.y() + (label3->height() / 2) - (popup->height() / 2);
-
-    //         popup->move(targetX, targetY);
-    //         popup->startFadeIn(350);
-    //     });
-    // }
 }
 
 void MainWindow::buildMainGrid() {
@@ -618,7 +406,7 @@ void MainWindow::buildMainGrid() {
         mainLayout = new QGridLayout(_mainWidget);
         mainLayout->setAlignment(Qt::AlignTop);
         mainLayout->setSpacing(5);
-      }
+    }
 
 
 
@@ -626,9 +414,11 @@ void MainWindow::buildMainGrid() {
     // 3. Rebuild the Grid layout matching your live vector arrays sizes
     for (int row = 0; row < _stationName->size(); ++row) {
         QLabel *label1 = new QLabel(_stationName->at(row), _mainWidget);
+        label1->setAlignment(Qt::AlignCenter);
         QLabel *label2 = new QLabel("speed", _mainWidget);
+        label2->setAlignment(Qt::AlignCenter);
 
-        ClickableLabel* label3 = new ClickableLabel("Click_to_enable_Receiver_Port", _mainWidget);
+        ClickableLabel* label3 = new ClickableLabel("Click_to_enable_Receiver_Socket", _mainWidget);
         label3->setMouseTracking(true);
         label3->setCursor(Qt::PointingHandCursor);
 
@@ -637,21 +427,51 @@ void MainWindow::buildMainGrid() {
         _speedLabelsObj.append(label2); // <-- CRITICAL TRACKING STEP
         _receiverPortsLabelobj.append(label3);
 
-        QString basicStyle =
-            "QLabel { background-color: #005252; color: white; border: 1px solid #e0e0e0; border-radius: 4px; padding: 6px; }"
-            "QLabel:hover { border: 1px solid #00adb5; background-color: #1a1a1a; }";
+        QString basicStyle1 =
+            "QLabel { "
+            "background-color: #005252; "
+            "color: yellow; "
+            "border: 2px solid #ffffff; "
+            "border-radius: 8px; "
+            "padding: 6px; "
+            "font-family: 'Monospace'; "     // Specifies the font family name
+            "font-size: 14px; "         // Sets font size in exact pixel values
+            "font-weight: bold; "       // Sets text thickness (e.g., normal, bold)
+            "}"
+            "QLabel:hover { "
+            "border: 1px solid #e32b5c; "
+            "background-color: #5acaf2; "
+            "}";
 
-        label1->setStyleSheet(basicStyle);
-        label2->setStyleSheet(basicStyle);
+
+        QString basicStyle =
+            "QLabel { "
+            "background-color: #005252; "
+            "color: yellow; "
+            "border: 1px solid #e0e0e0; "
+            "border-radius: 4px; "
+            "padding: 6px; "
+            "font-family: 'Arial'; "     // Specifies the font family name
+            "font-size: 14px; "         // Sets font size in exact pixel values
+            "font-weight: bold; "       // Sets text thickness (e.g., normal, bold)
+            "}"
+            "QLabel:hover { "
+            "border: 1px solid #00adb5; "
+            "background-color: #a03bf7; "
+            "}";
+
+        // QString basicStyle =
+        //     "QLabel { background-color: #005252; color: white; border: 1px solid #e0e0e0; border-radius: 4px; padding: 6px; }"
+        //     "QLabel:hover { border: 1px solid #00adb5; background-color: #1a1a1a; }";
+
+        label1->setStyleSheet(basicStyle1);
+        label2->setStyleSheet(basicStyle1);
         label3->setStyleSheet(basicStyle);
 
         mainLayout->addWidget(label1, row, 0);
         mainLayout->addWidget(label2, row, 1);
         mainLayout->addWidget(label3, row, 2);
         // Connect your existing Clicked Lambda function block here
-        // QObject::connect(label3, &ClickableLabel::clicked, [this, label3, row]() {
-        //     // ... [Keep your entire popup and portToggledInPopup logic exactly the same here] ...
-        // });
         QObject::connect(label3, &ClickableLabel::clicked, [this, label3, row]() {
             HiddenIconsPopup* popup = new HiddenIconsPopup(this);
 

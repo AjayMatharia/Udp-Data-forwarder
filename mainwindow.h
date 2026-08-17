@@ -32,7 +32,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 private:
-    QPushButton *_button;
+    // QPushButton *_button;
     QTabWidget *_mainTable;
     QString _configPath;
     QVector<QString> *_stationPort;
@@ -48,16 +48,16 @@ private:
     QList<QLabel*> _stationLabels;
     QList<ClickableLabel*> _receiverPortsLabelobj;
     QGridLayout* mainLayout;
-     QList<QLabel*> _speedLabelsObj;
-     QMap<QString, QList<qint64>> m_stationPacketTimes;
+    QList<QLabel*> _speedLabelsObj;
+    QMap<QString, QList<qint64>> m_stationPacketTimes;
 
 
 
-//     QMenuBar *_menuBar;
-//     QMenu *_fileMenu;
-//     QAction *_newAction ;
-//     QAction *_openAction;
-//     QAction *_exitAction;
+    //     QMenuBar *_menuBar;
+    //     QMenu *_fileMenu;
+    //     QAction *_newAction ;
+    //     QAction *_openAction;
+    //     QAction *_exitAction;
     void clearMainWidget();
     void buildMainGrid();
 public:

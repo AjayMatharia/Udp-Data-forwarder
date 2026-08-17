@@ -34,7 +34,7 @@ private:
 
     QString _configPath;
     // QString _configPath2;
-    unsigned int indexvalue;
+    int indexvalue;
 
 
     QMap<QString, QString> _stationIpMap;

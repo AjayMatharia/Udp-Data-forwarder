@@ -28,8 +28,8 @@ public:
         setWindowOpacity(0.0);
 
         setStyleSheet(
-            "QCheckBox { color: white; padding: 5px; }"
-            "QCheckBox::hover { background-color: #333333; border-radius: 4px; }"
+            "QCheckBox { color: #e7e8cc; padding: 5px; font: bold 14px 'Arial'; }"
+            "QCheckBox::hover { background-color: #2e66f0; border-radius: 6px; }"
             );
 
         // Initialize the central layout exactly once
@@ -92,7 +92,7 @@ protected:
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing);
 
-        QColor bgColor("#242424");
+        QColor bgColor("#1d2d54");
         QColor borderColor("#3d3d3d");
 
         int arrowWidth = 10;
