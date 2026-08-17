@@ -12,9 +12,16 @@
 *.rej
 *.so
 *.so.*
+*.dll
+*.dylib
+*.slo
+*.lo
+*.la
+*.lai
 *_pch.h.cpp
 *_resource.rc
 *.qm
+*.qmlls.ini
 .#*
 *.*#
 core
@@ -27,6 +34,7 @@ Makefile*
 *.prl
 *.app
 moc_*.cpp
+moc_*.h
 ui_*.h
 qrc_*.cpp
 Thumbs.db
@@ -35,10 +43,24 @@ Thumbs.db
 /.qmake.cache
 /.qmake.stash
 
+# Qt-specific and build files
+object_script.*.Release
+object_script.*.Debug
+*_plugin_import.cpp
+*.qmlc
+*.jsc
+*build-*
+build/
+target_wrapper.*
+*_qmlcache.qrc
+
 # qtcreator generated files
 *.pro.user*
 *.qbs.user*
 CMakeLists.txt.user*
+*.qmlproject.user*
+compile_commands.json
+*creator.user*
 
 # xemacs temporary files
 *.flc
@@ -70,7 +92,6 @@ CMakeLists.txt.user*
 
 # Binaries
 # --------
-*.dll
 *.exe
 
 # Directories with generated files
